@@ -2,9 +2,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Tabs
     const tabs = document.querySelectorAll('.tabheader__item'),
-          tabsContent = document.querySelectorAll('.tabcontent'),
-          tabsParent = document.querySelector('.tabheader__items');
-    
+        tabsContent = document.querySelectorAll('.tabcontent'),
+        tabsParent = document.querySelector('.tabheader__items');
+
     function hideTabContent() {
         tabsContent.forEach(item => {
             item.classList.add('hide');
@@ -28,9 +28,9 @@ window.addEventListener('DOMContentLoaded', () => {
     tabsParent.addEventListener('click', (event) => {
         const target = event.target;
 
-        if(target && target.classList.contains('tabheader__item')) {
+        if (target && target.classList.contains('tabheader__item')) {
             tabs.forEach((item, index) => {
-                if(target == item) {
+                if (target == item) {
                     hideTabContent();
                     showTabContent(index);
                 }
@@ -41,20 +41,20 @@ window.addEventListener('DOMContentLoaded', () => {
     // Timer
 
     const deadline = '2024-06-11';
-    
+
     function getTimeRemaining(endtime) {
-        let days = 0, 
-            hours = 0, 
-            minutes = 0, 
+        let days = 0,
+            hours = 0,
+            minutes = 0,
             seconds = 0;
         const t = Date.parse(endtime) - Date.parse(new Date());
 
-        if(t > 0) {
-        days = Math.floor(t / (1000 * 60 * 60 * 24));
-        hours = Math.floor((t / (1000 * 60 * 60) % 24));
-        minutes = Math.floor((t / 1000 / 60) % 60);
-        seconds = Math.floor((t / 1000) % 60);
-        } 
+        if (t > 0) {
+            days = Math.floor(t / (1000 * 60 * 60 * 24));
+            hours = Math.floor((t / (1000 * 60 * 60) % 24));
+            minutes = Math.floor((t / 1000 / 60) % 60);
+            seconds = Math.floor((t / 1000) % 60);
+        }
 
         return {
             'total': t,
@@ -66,7 +66,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function getZero(num) {
-        if(num >= 0 && num < 10) {
+        if (num >= 0 && num < 10) {
             return `0${num}`;
         }
         return num;
@@ -89,10 +89,10 @@ window.addEventListener('DOMContentLoaded', () => {
             minutes.innerHTML = getZero(t.minutes);
             seconds.innerHTML = getZero(t.seconds);
 
-            if(t.total <= 0) {
+            if (t.total <= 0) {
                 clearInterval(timeInterval);
             }
-        }        
+        }
     }
 
     setClock('.timer', deadline);
@@ -100,8 +100,8 @@ window.addEventListener('DOMContentLoaded', () => {
     // Modal window
 
     const modalTrigger = document.querySelectorAll('[data-modal]'),
-          modal = document.querySelector('.modal'),
-          modalCloseBtn = document.querySelector('[data-close]');
+        modal = document.querySelector('.modal'),
+        modalCloseBtn = document.querySelector('[data-close]');
 
     function openModal() {
         modal.classList.add('show');
@@ -113,8 +113,7 @@ window.addEventListener('DOMContentLoaded', () => {
     modalTrigger.forEach(item => {
         item.addEventListener('click', openModal);
     });
-    
-    
+
 
     modalCloseBtn.addEventListener('click', () => {
         modal.classList.add('hide');
@@ -124,7 +123,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     modal.addEventListener('click', (event) => {
-        if(event.target === modal) {
+        if (event.target === modal) {
             modal.classList.add('hide');
             modal.classList.remove('show');
             // modal.classList.toggle('show');
@@ -133,19 +132,19 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (e) => {
-        if(e.code === "Escape" && modal.classList.contains('show')) {
+        if (e.code === "Escape" && modal.classList.contains('show')) {
             modal.classList.add('hide');
             modal.classList.remove('show');
             // modal.classList.toggle('show'); 
             document.body.style.overflow = '';
         }
-        
+
     });
 
     const modalTimerId = setTimeout(openModal, 3000);
 
     function showModalByScroll() {
-        if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
             openModal();
             window.removeEventListener('scroll', showModalByScroll);
         }
@@ -156,12 +155,13 @@ window.addEventListener('DOMContentLoaded', () => {
 //     Use classes for cards
 
     class MenuCard {
-        constructor(imgSrc, imgAlt, title, description, price, parentSelector) {
+        constructor(imgSrc, imgAlt, title, description, price, parentSelector, ...classes) {
             this.imgSrc = imgSrc;
             this.imgAlt = imgAlt;
             this.title = title;
             this.description = description;
             this.price = price;
+            this.classes = classes.length ? classes : ['menu__item'];
             this.transfer = 27;
             this.changeToUAH();
             this.parent = document.querySelector(parentSelector);
@@ -173,7 +173,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
         render() {
             const element = document.createElement('div');
-            element.innerHTML = `<div class="menu__item">
+            this.classes.forEach(clazz => {
+                element.classList.add(clazz);
+            });
+            element.innerHTML = `
                     <img src=${this.imgSrc} alt=${this.imgAlt}>
                     <h3 class="menu__item-subtitle">${this.title}</h3>
                     <div class="menu__item-descr">${this.description}</div>
@@ -181,8 +184,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div class="menu__item-price">
                         <div class="menu__item-cost">Цена:</div>
                         <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-                    </div>
-                </div>`;
+                    </div>`;
 
             this.parent.append(element);
         }
@@ -205,7 +207,8 @@ window.addEventListener('DOMContentLoaded', () => {
         "В меню \"Премиум\" мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. " +
         "Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!",
         10,
-        ".menu .container"
+        ".menu .container",
+        "menu__item"
     ).render();
 
     new MenuCard(
@@ -215,7 +218,8 @@ window.addEventListener('DOMContentLoaded', () => {
         "Меню \"Постное\" - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, " +
         "молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.",
         11,
-        ".menu .container"
+        ".menu .container",
+        "menu__item"
     ).render();
 
 });
